@@ -1,0 +1,22 @@
+{% extends "header.html" %}
+{% block content %}
+<div id="the_content"></div>
+{% endblock %}
+{% block scripts %}
+<link href="{{ url_for('static', filename= 'styling.css')}}" rel="stylesheet">
+<script src="{{ url_for('static', filename= 'js/bootstrap.min.js')}}"
+              ></script>    
+         
+<script> 
+   $(document).ready(function(){
+       random_title();
+     $("#the_content").load("https://s3.us-east-2.amazonaws.com/artecon/article_templates/{{filename}}");
+    $( "#cater" ).click(function(){
+      $('.submen').toggle();  
+    });
+     sort_button();
+    })
+</script>
+   
+   
+{% endblock %}

@@ -1,0 +1,27 @@
+
+.navbar-inverse{  
+    background-color: white;
+    border: none;
+}
+.navbar-collapse{
+    border:none;
+}
+.navbar-toggle{
+    margin-top:30px;
+}
+.logot{
+    height:140px;
+    width:230px;
+    float: left;
+    margin-bottom: -130px;
+    margin-right: 10px; 
+}
+.headdiv{
+    position: relative;
+    margin-top: 30px;
+    float:left;
+    font-size: 25px;
+    width:51%;
+    margin-bottom: -20px;
+    
+}

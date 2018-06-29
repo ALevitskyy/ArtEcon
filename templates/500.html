@@ -1,0 +1,29 @@
+{% extends "header.html" %}
+
+
+{% block content %}
+        <div style="padding-left: 50px;">
+       <h1 style="color:green">Something went wrong and an internal server error occured. Please, let me know what has happened!</h1>
+            </div>
+{% endblock %}
+
+{% block scripts %}
+<script> 
+   $(document).ready(function(){
+       random_title();
+     
+    $( "#cater" ).click(function(){
+      $('.submen').toggle();  
+    });
+     sort_button();
+    })
+</script>
+   
+   
+{% endblock %}
+
+
+
+
+
+

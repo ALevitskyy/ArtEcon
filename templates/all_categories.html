@@ -1,0 +1,42 @@
+{% extends "header.html" %}
+
+
+{% block content %}
+
+          <div class="paper" style="text-align: center">
+              <h1 style="color:purple">List of All Categories</h1>
+              <ul style="list-style-type: none">         
+                        {% for cater in caters %}
+      <li>
+          <h3>
+              <a href="{{url_for('.categorypage',
+          categoryname=remove_whitespace(cater[1])
+          )}}">{{cater[1]}} - ({{cater[0]}})</a>
+          </li>
+                  </h3>
+          {% endfor %}
+                  </ul>   
+              </div>  
+{% endblock %}
+
+
+{% block scripts %}
+<script> 
+   $(document).ready(function(){
+       random_title();
+     
+    $( "#cater" ).click(function(){
+      $('.submen').toggle();  
+    });
+     sort_button();
+    })
+</script>
+   
+   
+{% endblock %}
+
+
+
+
+
+

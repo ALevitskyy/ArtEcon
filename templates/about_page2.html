@@ -1,0 +1,80 @@
+{% extends "header.html" %}
+
+
+{% block content %}
+<div class="paper about"> 
+          <div class="content">
+              <h2>What is this?</h2>
+          ArtEcon (short for Artificial Economist) is my individual project/blog with big ambitions. I am using this website to publish my experiments with data visualizations and share my comments on the current affairs, economics issues and other matters dear to my heart.
+          </div>
+          </div>
+      
+      <div class="paper about"> 
+          <div class="content">
+              <h2>The Goals</h2>
+          There are 2 goals of the ArtEcon: one personal and one of more global importance. The personal goal is to improve my coding skills and creativity to learn how to make beautiful websites and visualizations. After doing economics for 4 years I decided that web development and economic journalism interest me at least as much as popular destinations of my classmates: management consultancies, government agencies and investment banking. The website serves me as a playground where I can try new thing and get feedback.
+          </div>
+          </div>
+      
+      <div class="paper about"> 
+          <div class="content">
+              <h2>More importantly...</h2>
+          The more important objective is to change economics from being some kind of wizardry as it is in its current state, to a science unserstandable to layman and capable of providing useful recommendations to improve lives of millions of people. The current state-of-the-art techniques used in academia rely too much on models whose implications are impossible to test, while business economists and politicians make claims which they can`t back up. I think visualizing main economic datasets as well as providing some inuitive fact-based economic commentary should solve these problems and popularize economics, improving understanding of the general public.
+          </div>
+          </div>
+      
+      <div class="paper about"> 
+          <div class="content">
+              <h2>Why is that important?</h2>
+              <p> Lack of economic understanding in public is one of the main causes of absence of positive political action. Economic policies affect everyone in society and it is very improtant to not leave the task of policymaking to a small group of professional economists and politicians who also have their prejudices. The elections are no longer won by providing trustworthy promises of improvements of material well-being and it can not continue this way.</p>
+              
+            <p>  Politicians often make claims that an action, be it an increasese in minimum wage or decreasing working week from 40 to 30 hours, or privatization of energy industry will have unintended economic side effects, be it increase in inflation or unemployment or decrease in GDP. In many cases, however there is no sufficient evidence to back up such claims. Knowing economic consequences of your actions is arguably more important than knowing your rights according to law. </p>
+        
+              <p>Why?? Because it helps to gain more rights! Increasing public knowledge of economics would improve the quality of political process, by given more power behind people`s demands. Hoepfully, this would result in a decrease in inequaltiy, improve environemnt and lead to a happier and more inclusive society. Being clear about the world around is of exterme importance in our ever-changing digital age full of conflicting signals, confusion and fear. </p>
+          </div>
+          </div>
+      
+      
+      <div class="paper about"> 
+          <div class="content">
+              <h2>How can you contribute?</h2>
+              <p> Of course it is impossible to achieve what I have descrive above with my solo effort. While this project is individual it would be great if it evolves and gives birth to a community of "economics hackers" shining the light on truths and lies of today`s political economy. Particularly, it would be great to create a community-maintained economic opinion/news website alternative to major mass media free of any political bias.
+              </p>
+              
+              <p> To contribute to my project you can share your ideas in the comment sections of articles, on the forum (both are under developemnt) or find my e-mail adress at "contact details" part of the about page. You can also check-out the 
+                  <a href="https://github.com/ALevitskyy/ArtEcon">GitHub page </a> with the source-code of the website.
+              </p>
+
+          </div>
+          </div>
+      
+
+      
+      <div class="paper about"> 
+          <div id="about" class="content">
+              <h2> <a id="contacts"></a>Contact details</h2>
+              If you have any suggestions, want to express your admiration, contribute in one way or another, have an interesting idea, want to share your findings, want to propose me a job or just want to talk, you can always send me an e-mail to <b>arteconxyz@gmail.com</b> or write to the websites facebook page <a href="https://www.facebook.com/artecon1"><b>https://www.facebook.com/artecon1</b> </a> and wait to see what happens!)
+          </div>
+          </div>
+{% endblock %}
+
+{% block scripts %}
+<script> 
+   $(document).ready(function(){
+       random_title();
+     
+    $( "#cater" ).click(function(){
+      $('.submen').toggle();  
+    });
+     sort_button();
+    })
+</script>
+   
+   
+{% endblock %}
+
+
+
+
+
+
