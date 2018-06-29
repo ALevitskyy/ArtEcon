@@ -1,0 +1,408 @@
+---
+title: "Explaining surprising fall in productivity despite breaktrhoughs in AI"
+date: "28/6/2018"
+output: 
+  html_document:
+    css: styles.css
+
+---
+```{r, message = FALSE,echo=FALSE,warning=FALSE}
+library(dplyr)
+library(DT)
+library(openxlsx)
+library(ggplot2)
+library(grid)
+library(dplyr)
+library(gridExtra)
+library(htmlwidgets)
+library(data.table)
+library(crosstalk)
+library(plotly)
+library(GGally)
+library(d3heatmap)
+library("aws.s3")
+library("aws.iam")
+index<-0
+AWS_ACCESS_KEY_ID="AWS_ACCESS_KEY_ID"
+AWS_SECRET_ACCESS_KEY="AWS_SECRET_ACCESS_KEY"
+AWS_SESSION_TOKEN="AWS_SESSION_TOKEN"
+#aws sts get-session-token --duration-seconds 129600 (enter your own duration)
+Sys.setenv("AWS_ACCESS_KEY_ID" = AWS_ACCESS_KEY_ID,
+           "AWS_SECRET_ACCESS_KEY" = AWS_SECRET_ACCESS_KEY,
+           "AWS_DEFAULT_REGION" = "us-east-2",
+           "AWS_SESSION_TOKEN" = AWS_SESSION_TOKEN)
+change_imports<-function(file_name,base_folder){
+  my_file = readLines(paste0(base_folder,file_name),-1)
+  my_file<-my_file[unlist(lapply(my_file,nchar))!=0]
+  i<-1
+  while(!grepl("</head>",my_file[i])){
+    if(grepl("</script>",my_file[i])|grepl("<link",my_file[i])){
+      my_file[i]=sub(
+        paste0(sub(".html","",file_name),"_files"),
+          "https://s3.us-east-2.amazonaws.com/artecon/js_libs",
+        my_file[i]) 
+    }
+    i<-i+1
+  }
+  writeLines(my_file,paste0(base_folder,file_name))
+}
+html_save_load_aws_nb<-function(htmlwidg){
+  filename<-"first_file"
+  saveWidget(htmlwidg,paste0(index,".html"))
+  change_imports(paste0(index,".html"),"")
+  put_object(file=paste0(index,".html"), 
+             object = paste0("article_templates/",filename,"/",index,".html"),
+             bucket = "artecon"
+             )
+  index<<-index+1
+  
+ cat(paste0("<div class='resp-container'>
+<iframe class='resp-iframe' src='https://s3.us-east-2.amazonaws.com/artecon/",
+paste0("article_templates/",filename,"/",index,".html"),"'></iframe></div>"))
+}
+```
+
+<script type="text/javascript">
+function kill_frame(elem,file_name){
+elem.parentNode.getElementsByTagName('iframe')[0].remove();
+elem.innerHTML = "Show";
+elem.onclick=function(){prepareFrame(elem,file_name)};};
+  
+  
+function prepareFrame(elem,file_name){
+var ifrm = document.createElement("iframe");
+ifrm.setAttribute("src", file_name);
+ifrm.style.width = "900px";
+ifrm.style.height = "600px";
+elem.parentElement.appendChild(ifrm);
+elem.onclick=function(){kill_frame(elem,file_name);};
+elem.innerHTML = "Close";
+}
+</script>
+
+
+<div style="color:darkgoldenrod">
+<b>
+<i>
+Shortly: while media, ads and art create illusion of technology making economy more productive, the sad reality is that the average worker contributed less to US economy in 2017 than in 2016 despite major breakthroughs in AI and attempts to apply this general-purpose technology to real-life tasks.
+
+The most posible explanation is that the socio-economic impact of digital revolution shifted the focus of US economy to less productive sectors not affected by automation: food and transportation. The new entrants to these industries produced on average $20000 less than a typical worker a year ago.
+
+While this decline in productivity does not necessarily mean that the economy is destined for a recession, the recent economic growth is more reliant on housing market than ever before, implying that the landing won`t be soft. However, there are reasons for optimism, as GDP and productivity measures based on it significantly underestimate how much has been achieved by the Open Source community, artists that freely share their work and many other valuable relevant activities that do not enter GDP - "the most important ecoconomic statstic."
+</i>
+</b>
+</div>
+
+<br />
+
+Being interested in machine learning for last couple of years and putting considerable effort into improving my skills, I recently have asked myself a question whether the technology is realy replacing humans and makes us more productive. By productivity, I mean ability of an individual worker to produce more output per hour. And recent advances gives a promise that labour input may soon become irrelevant, hence the productivity should increase dramatically.
+
+And then I decided to check the stats... And you know, it seems like AI does not make us more productive, it actually makes us less productive...
+
+I invite you to have a look at this graph provided by the world bank which provides quite a crude but fair measure of US productivity:
+<br />
+<div class="resp-container">
+<iframe class="resp-iframe" src="https://data.worldbank.org/share/widget?end=2017&indicators=SL.GDP.PCAP.EM.KD&locations=US&start=1991&view=chart" ></iframe>
+</div>
+<br />
+What you can see is that productivity was continuously growing for last 15 years slowing down during the DotCom bubble in 2001 and temporarily falling during the credit crunch but quickly recovering. Up until 2016 any decrease in productivity was associated with a decline in economic activity, but not anymore. In 2017, an unprecetendented phenomenon happened: labour productivity decrease despite booming economy growing 2.3% above the last 10 years average. And it decreased by unprecedented $500 which is larger than the decrease during 2008.
+
+Ok, $500 dollars per person does not seem to be that of a big deal. But, when multiplied by over 120 millions workers, you get 60 billion dollar loss. And adding unfair distribution of incomes in current capitalistic system, this loss is unlikely to hurt corporate profits that much.
+
+But, turning to the most intresting question: you, probably, wonder why productivity would fall despite all of the "disrupting" technologies being engineered almost on weekly basis. And there are essentially only 2 possible explanations: 1) either workers which worked well in 2015 decided to take a break and work a little less hard the following year or 2) the new employees are less productive than before. Usually it is a mixture of both effects, but I will argue that effect #2 is more important, and my main piece of evidence is the graph below:
+<br />
+<div class="resp-container">
+<iframe class="resp-iframe" src='https://d3fy651gv2fhd3.cloudfront.net/embed/?s=unitedstaempper&v=201806011235v&d1=20130101&d2=20181231&h=500&v=300'></iframe>
+</div>
+
+<br />
+Well, by itself it does not say much, number of workers employed was growing both in 2014 and 2015 when productivity was growing as well as in 2017 when it was declining. To understand what has actually happened, one needs to find out who are those people who recently joined the labour force. And the answer caught me a bit by surprise. On the bar chart below produced by me using Occupational Employment Statistics (OES) published by US Bureau of Labour Statistics (BLS), you can see how many new workers entered each occupation with relation to the total number of new entrants. The plot is INTERACTIVE, so to see the actual number and occupation one must HOVER or TAP (if one reads from mobile phone or tablet) on the bar of interest.
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE}
+
+oes<-read.csv("/Users/andriylevitskyy/Desktop/artecon/articles_materials/Labor/researchproposal/merged_data.csv")
+oes$OCC_GROUP<-toupper(oes$OCC_GROUP)
+oes<-oes%>%mutate(TOT_EMP=as.integer(as.character(TOT_EMP)))
+oes$TOT_EMP[is.na(oes$TOT_EMP)]<-0
+majors<-oes%>%subset(OCC_GROUP=="MAJOR")%>%group_by(OCC_CODE,YEAR)%>%
+  summarize(sum=sum(TOT_EMP))
+
+majors<-oes%>%subset(OCC_GROUP=="MAJOR")
+grouped<-majors%>%group_by(YEAR,OCC_CODE)%>%summarize(sum=sum(TOT_EMP))
+```
+
+
+
+# Increase in number of workers in each occupation group {.tabset .tabset-fade .tabset-pills}
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+final_gen<-function(i){
+  final<-subset(grouped,YEAR==i[2])
+final<-final[order(final$OCC_CODE),]
+sub<-subset(grouped,YEAR==i[1])
+sub<-sub[order(sub$OCC_CODE),]
+final$differ<-sub$sum-final$sum
+final$perc_differ<-final$differ/sum(final$differ)*100
+final<-merge(final,subset(majors,YEAR==i[2])%>%
+               select(OCC_CODE,OCC_TITLE),by="OCC_CODE",
+             all.y=FALSE,all.x=FALSE)
+final<-final[!duplicated(final), ]
+final<-final[order(-final$perc_differ),]
+final$OCC_TITLE<-factor(final$OCC_TITLE,levels=(as.character(final$OCC_TITLE)))
+final<-final[,c(6,4,5,3)]
+final$percent_labor<-final$sum/(sum(final$sum))
+colnames(final)<-c("Occupation Title",
+                   paste0("Number of New Workers Entering the Industry in ",i[2]),
+                   "Percentage of New entrants choosing the Occupation",
+                   paste0("Number of People in Occupation in" ,i[2]),
+                   "Percentage of all Workers working in Occupation"
+                   )
+return(final)
+}
+```
+
+## 2016-2017
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+sub_plot<-ggplot(data=final_gen(c(2017,2016)), aes(x=`Occupation Title`,
+                                 y=`Percentage of New entrants choosing the Occupation`)) +
+  geom_bar(color='darkblue',fill='darkblue',stat="identity", width=0.5)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+ggplotly(sub_plot)%>%html_save_load_aws_nb()
+
+```
+
+## 2014-2016
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+sub_plot<-ggplot(data=final_gen(c(2016,2014)), aes(x=`Occupation Title`,
+                                 y=`Percentage of New entrants choosing the Occupation`)) +
+  geom_bar(color='darkblue',fill='darkblue',stat="identity", width=0.5)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+ggplotly(sub_plot)%>%html_save_load_aws_nb()
+
+```
+
+## 2007-2008
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+sub_plot<-ggplot(data=final_gen(c(2008,2007)), aes(x=`Occupation Title`,
+                                 y=`Percentage of New entrants choosing the Occupation`)) +
+  geom_bar(color='darkblue',fill='darkblue',stat="identity", width=0.5)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+ggplotly(sub_plot)%>%html_save_load_aws_nb()
+
+```
+
+## 2004-2006
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+sub_plot<-ggplot(data=final_gen(c(2006,2004)), aes(x=`Occupation Title`,
+                                 y=`Percentage of New entrants choosing the Occupation`)) +
+  geom_bar(color='darkblue',fill='darkblue',stat="identity", width=0.5)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+ggplotly(sub_plot)%>%html_save_load_aws_nb()
+
+```
+
+# 
+
+The biggest growing employers are not in the field of AI or STEM as advertised, but Personal Care (in 2017) and Food Services (2014-2016) industries. Computer related occupations created around 5% of new jobs during (2014-2017) while Personal Care created 30% of new jobs in 2016-2017 and Food Related Occupations created 13% of nww jobs in 2014-2016. Transportation industry was also a big contributor to the growth in employment. You can find more interesting patterns by examining the charts. If you prefer table format of presentation, you can access the data in tabular form in appendix in the end of the article.
+
+Historically, Food Serices and Personal Care industries were not the most productive ones. However, looking at the tables in appendix, Food Services actually account for 9% of employment. While, I remember learning on the lectures that during the industrial revolution the labour shifted from agriculture to manufacturing and recently there was a movement from manufacturing to service sector I have not really understood the implications. When I though of services I was thinking of internet providers, consultants but not of the very basic services, and they start dominating the job market. So can this new trend explain degradation of productivity? To know the productivity of waitresses, taxi-drivers and carers, one needs to know they contribution to GDP. This data can foruntately be found in US Input-Output Tables (another underrated macroeconomic data source), analysed and visualized by me in the graphs below (unfrotunately 2017 data was not released yet):
+
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE}
+path_make<-"/Users/andriylevitskyy/Desktop/artecon/articles_materials/IO/IOMake_Before_Redefinitions_1997-2016_Summary.xlsx"
+path_use<-"/Users/andriylevitskyy/Desktop/artecon/articles_materials/IO/IOUse_Before_Redefinitions_PRO_1997-2016_Summary.xlsx"
+accounts_make<-read.xlsx(path_use,sheet=3,startRow = 6)
+for(i in (seq(1997,2016,1))){
+  sheet_number<-i-1994
+  name_in_env1<-paste0("use",i)
+  name_in_env2<-paste0("make",i)
+  assign(name_in_env1,read.xlsx(path_use,sheet=sheet_number,startRow = 6))
+  assign(name_in_env2,read.xlsx(path_make,sheet=sheet_number,startRow = 6))
+}
+industry_output<-make1997[2:72,c(2,76)]
+commodity_output<-t(make1997[c(1,73),3:73])
+commodity_output[,2]<-as.integer(as.character(commodity_output[,2]))
+for(i in (seq(1998,2016,1))){
+  name_in_env1<-paste0("make",i)
+  obj<-get(name_in_env1)
+  industry_output<-cbind(industry_output,as.integer(as.character(obj[2:72,76])))
+  commodity_output<-cbind(commodity_output,as.integer(as.character(obj[73,3:73])))
+}
+colnames(industry_output)<-c("Industry",paste0("year",seq(1997,2016,1)))
+#commodity_output<-as.data.frame(commodity_output)
+colnames(commodity_output)<-c("Commodity",paste0("year",seq(1997,2016,1)))
+
+new_sequence<-data.frame(`Total Intermediate`=integer(),
+                         `Compensation of employees`=integer(),
+                         `Taxes on production and imports, less subsidies`=integer(),
+                         `Gross operating surplus`=integer(),
+                         `Industry`=integer(),
+                         `Total Value Added`=integer(),
+                         `Year`=integer())
+for(i in (seq(1997,2016,1))){
+  name_in_env1<-paste0("use",i)
+  obj<-get(name_in_env1)
+  c2ompensat_2016<-t(obj[77:80,3:73])
+  c2ompensat_2016<-apply(c2ompensat_2016,2,as.integer)
+  c2ompensat_2016[is.na(c2ompensat_2016)]<-0
+  c2ompensat_2016<-as.data.frame(c2ompensat_2016)
+  colnames(c2ompensat_2016)<-as.character(use2016[77:80,2])
+  c2ompensat_2016$Industry<-use2016[2:72,2]
+  c2ompensat_2016%>%
+    mutate(`Total Value Added`=`Compensation of employees`+
+             `Taxes on production and imports, less subsidies`+
+             `Gross operating surplus`)%>%arrange(desc(`Total Value Added`))->c2ompensat_2016
+  c2ompensat_2016$Year<-i
+  colnames(c2ompensat_2016)<-colnames(new_sequence)
+  new_sequence<-rbind(new_sequence,c2ompensat_2016)
+}
+```
+
+# Contribution to GDP growth by sector in % {.tabset .tabset-fade .tabset-pills}
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE}
+final2_gen<-function(i){
+a<-subset(new_sequence,Year==i[1])
+b<-subset(new_sequence,Year==i[2])
+a<-a[,5:6]
+b<-b[,5:6]
+
+merged<-merge(a,b,by="Industry")
+merged$difference<-merged$Total.Value.Added.x-merged$Total.Value.Added.y
+merged$contrib<-merged$difference/sum(merged$difference)*100
+final2<-merged[,c(1,3,4,5)]
+final2<-final2[order(-final2$contrib),]
+final2$Industry<-factor(final2$Industry,levels=(as.character(final2$Industry)))
+final2$perc_industry<-final2$Total.Value.Added.y/sum(final2$Total.Value.Added.y)*100
+final2<-final2[,c(1,2,5,3,4)]
+colnames(final2)<-c("Industry",
+                    paste("Value added in", i[2] ,"by industry"),
+                    "Percentage of Total GDP produced by industry",
+                    "Indsutry growth in $millions",
+                    "Contribution to GDP growth in %")
+return(final2)
+}
+```
+
+## 2014-2016 
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+sub_plot<-ggplot(data=final2_gen(c(2016,2014)), aes(x=`Industry`,
+                                 y=`Contribution to GDP growth in %`)) +
+  geom_bar(color='red',fill='red',stat="identity", width=0.5)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        panel.background = element_rect(fill = "white", colour = "grey50"))
+ggplotly(sub_plot)%>%html_save_load_aws_nb()
+
+```
+ 
+## 2007-2008 
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+sub_plot<-ggplot(data=final2_gen(c(2008,2007)), aes(x=`Industry`,
+                                 y=`Contribution to GDP growth in %`)) +
+  geom_bar(color='red',fill='red',stat="identity", width=0.5)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        panel.background = element_rect(fill = "white", colour = "grey50"))
+ggplotly(sub_plot)%>%html_save_load_aws_nb()
+```
+
+## 2004-2006 
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+sub_plot<-ggplot(data=final2_gen(c(2006,2004)), aes(x=`Industry`,
+                                 y=`Contribution to GDP growth in %`)) +
+  geom_bar(color='red',fill='red',stat="identity", width=0.5)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        panel.background = element_rect(fill = "white", colour = "grey50"))
+ggplotly(sub_plot)%>%html_save_load_aws_nb()
+```
+
+# 
+
+Unfrotunately, the categories do not coincide in the 2 datasets. However, it is possible to make some inferences. Particularly, in 2014-2016 period, food services and drinking places only contributed 4% of the GDP growth while employing 13% of new workers. The most growth came from housing and constraction industries, which together account for 23% of GDP growth. Using simple math, it is possible to approximate what the productivity of those new workers was using the information in tables in appendix. 703420 new workers in food industry produced $49965 millions worth of value. Each worker thus produced $49965m/703420=$71000, which is $40000 less than average productivity. It is not surprising that rate of employment growth in food services industries decreased in 2017. Repeating the similar calculation for construction workers, people who contributed the most to the economic growth in 2016, the number is $400000. However, I would not trust this productivity number, if one believes that house prices are significantly inflated. As a result, I would argue that the productivity decline is way more dramatic then shown in data.
+
+Does this means that a recession is coming? Does it mean that we are already in a recession which we do not yet percive? I don't know, and can not make such claims. However, I can compare to what has happened before the previous one. Unfortunately, after staring at the tables for quite a while I could not find many meaningful patterns. One area of concern for me would be a decrease in number of salesman in the economy, but this may be a sign of digitalization of the industry. It could be that we avoided recession by luck, as housing and oil cycles did not coincide. When oil industry was in decline, housing was growing, while now as housing market slowing down, the oil prices are rising. But that`s just a hypothesis.
+
+More interesting is that in 2004-2006 the economic growth was relying on joint contribution of many sectors, while now there are few key drivers. Housing and construction industries caused 23% of all economic growth in 2014-2016 while only 16% in 2004-2006, insurance and finance 15% recently and 10% before great recession. IT despite high hopes is only responsible for 10% of economic growth, however it is actually fascinating how it is still maintains growth after 400% growth between 1997-2014 (for this fact you need to wait for my visualization of input-output tables). As economic growth becomes more concentrated, it means that a problem in housing industry has more impact than before. This is a bad sign, and economist should start thinking of dealing with this problem.
+
+So is everything that bad after all? The answer is definite no, and the reason is that GDP is no longer a good indicator of people`s well being in both positive and negative sence. Positively, abundance of free music, open source software results in a decrease in economic growth but an increase in economic well-being. The populatirzation of AI and data science would have been impossible without abundance of free R and Pyhton packages. The idea is supported in <a href=https://www.ineteconomics.org/uploads/papers/Paper-Turner-Capitalism-in-the-Age-of-Robots.pdf> this article </a> written in very economist-like hard-to-understand language, but some ideas are very interesting and worth spending time to understand. So keep contributing to your communities freely or for money and hopefully one day the fruits of automation would be fairly distributed among both the owners of manless factories and arising waitress-taxi-driver-carers class.
+
+The code for the article can be found on the website`s <a href=https://github.com/ALevitskyy/ArtEcon/article> GitHub page </a> and below you can find the links to data and other external sources used:
+<ol>
+<li><a href=https://www.bls.gov/oes/> Occupational Employment Statistics (OES) computed by US Bureau of Labor Statistics (BLS) </a></li>
+<li><a href=https://www.bea.gov/industry/io_annual.htm> Input-Output Accounts Data by Bureau of Economics Analysis (BEA) of US Department of Commerce </a></li>
+<li><a href=https://data.worldbank.org/indicator/SL.GDP.PCAP.EM.KD?locations=US&start=1991&end=2017&view=chart> GDP per person employed (constant 2011 PPP $) data provided by The World Bank </a></li>
+<li><a href=https://tradingeconomics.com/united-states/employed-persons> United States Employed Persons </a></li>
+<li><a href=https://www.ineteconomics.org/uploads/papers/Paper-Turner-Capitalism-in-the-Age-of-Robots.pdf> Adair Turner "Capitalism in the age of robots", Lecture at School of Advanced International Studies, Johns Hopkins University  </a></li>
+</ul>
+
+
+
+# Apeendix
+
+## Occupational Statistics Tables {.tabset .tabset-fade .tabset-pills}
+
+### 2016-2017 
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+datatable(final_gen(c(2017,2016)))%>%html_save_load_aws_nb()
+```
+
+### 2014-2016 
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+datatable(final_gen(c(2016,2014)))%>%html_save_load_aws_nb()
+```
+ 
+### 2007-2008 
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+datatable(final_gen(c(2008,2007)))%>%html_save_load_aws_nb()
+```
+
+### 2004-2006 
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+datatable(final_gen(c(2006,2004)))%>%html_save_load_aws_nb()
+```
+
+## GDP growth by sector Tables {.tabset .tabset-fade .tabset-pills}
+
+### 2014-2016 
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+datatable(final2_gen(c(2016,2014)))%>%html_save_load_aws_nb()
+```
+ 
+### 2007-2008 
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+datatable(final2_gen(c(2008,2007)))%>%html_save_load_aws_nb()
+```
+
+### 2004-2006 
+
+```{r, message = FALSE,echo=FALSE,warning=FALSE,results="asis"}
+datatable(final2_gen(c(2006,2004)))%>%html_save_load_aws_nb()
+```
+
+
