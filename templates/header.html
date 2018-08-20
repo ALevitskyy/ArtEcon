@@ -55,9 +55,9 @@
               <div>
               <ul class="nav navbar-nav
                                submen">
-               <li><a href="{{url_for('.all_cater')}}">All Categories</a></li>         
+               <li><a href="{{url_for('all_cater')}}">All Categories</a></li>         
                         {% for tag in tags %}
-      <li><a href="{{url_for('.categorypage',
+      <li><a href="{{url_for('categorypage',
           categoryname=remove_whitespace(tag)
           )}}">{{tag}}</a></li>
       

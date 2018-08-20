@@ -1,6 +1,5 @@
 from flask import Blueprint, url_for, redirect, render_template
 from flask_wtf import Form
-from flask_wtf.file import FileField
 from werkzeug import secure_filename
 from wtforms import StringField,TextAreaField, Field
 from wtforms.widgets import TextInput

@@ -1,0 +1,578 @@
+{% extends "header.html" %}
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+
+<style>
+
+    body {
+        font: 10px sans-serif;
+    }
+
+    path.candle {
+        stroke: #000000;
+    }
+
+    path.candle.body {
+        stroke-width: 0;
+    }
+
+    path.candle.up {
+        fill: #00AA00;
+        stroke: #00AA00;
+    }
+
+    path.candle.down {
+        fill: #FF0000;
+        stroke: #FF0000;
+    }
+
+    .y.annotation.left path {
+        fill: #00AA00;
+    }
+
+    .y.annotation.right path {
+        fill: #FF0000;
+    }
+
+    .x.annotation path {
+        fill: #DDD80E;
+    }
+
+    .crosshair {
+        cursor: crosshair;
+    }
+
+    .crosshair path.wire {
+        stroke: #DDDDDD;
+        stroke-dasharray: 1, 1;
+    }
+
+    .crosshair .axisannotation path {
+        fill: #DDDDDD;
+    }
+    
+    rect.pane {
+        cursor: move;
+        fill: none;
+        pointer-events: all;
+    }
+    .skip-form{
+        display:none;
+    }
+    .hidd{
+       display:none; 
+    }
+    .serialized_form{
+       display:none;  
+    }
+    .game_related{
+       display:none;  
+    }
+    .i-am-centered { margin: auto; max-width: 300px;}
+    #table_div{
+        width:70%;
+    }
+    #error-log{
+    }
+    #tooltip
+{
+    text-align: center;
+    color: #fff;
+    background: #111;
+    position: absolute;
+    z-index: 100;
+    padding: 15px;
+}
+ 
+    #tooltip:after /* triangle decoration */
+    {
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid #111;
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: -10px;
+        margin-left: -10px;
+    }
+ 
+        #tooltip.top:after
+        {
+            border-top-color: transparent;
+            border-bottom: 10px solid #111;
+            top: -20px;
+            bottom: auto;
+        }
+ 
+        #tooltip.left:after
+        {
+            left: 10px;
+            margin: 0;
+        }
+ 
+        #tooltip.right:after
+        {
+            right: 10px;
+            left: auto;
+            margin: 0;
+        }
+    .help-tool{
+        margin-left:70px;
+        width:30px;
+        height:30px;
+    }
+    select,input[type=text],input[type=number],input[type=datetime] {
+    width: 100%;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+}
+    input[type=button], input[type=submit], input[type=reset],button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    max-width:100px;
+}
+    h2,h3,h1{
+        color:purple;
+    }
+
+</style>
+<h1 style="color:darkred;" class="i-am-centered">ForEx Trading Simulator </h1>
+<hr>
+<div class="container">
+<div class="row">
+   <div class="col-xs-4">
+       <h2>Plot OHLC candles</h2>
+       <span title="PLOT - plots the selected OHLC graph. When submitting the form, please make sure that you adhere the format of the default setting. Database has data starting from 01.01.2015 and ending 01.04.2018, so requests using data outside these days will be refused. LOAD ALL button loads data for all the currencies; CLOSE ALL closes all active plots" rel="tooltip"><img class="i-am-centered help-tool" src={{ url_for('static', filename= 'images/icon_with_question_mark.png')}}></span>
+<form class="main_form" method="post" enctype="multipart/form-data">
+    
+    {{ form.hidden_tag() }}
+    CURRENCY
+    {{ form.currency(class_="currency-form") }}
+    <br>
+    START DATE
+    {{ form.date_time(class_="maindate readonly")}}
+    <br>
+    CANDLE TYPE
+    {{ form.candle_type(class_="type-form") }}
+    <br>
+    NUMBER OF CANDLES
+    {{ form.candle_number}}
+    <br>
+    {{ form.skipped_candles(class_="skip-form")}}
+    <input type="submit" value="Plot">
+</form>
+       <button onclick="load_all()" type="button">Load all</button>
+<button onclick="close_all()" type="button">Close all</button>
+    </div>
+    
+<div class="col-xs-4">
+    <h2>Start the trading game!!</h2>
+    <span title="Initiates the trading simulation. Make sure to set date in 'Plot OHLC' form, as this would be the date when your simulator starts. After the simulation started you won`t be able to change the date. To start trading load some plots, make your decisions and then use 'Make a Trade' form to buy or sell something" rel="tooltip"><img class="i-am-centered help-tool" src={{ url_for('static', filename= 'images/icon_with_question_mark.png')}}></span>
+<form class="init_form" method="post" enctype="multipart/form-data">
+    
+    {{ init_form.hidden_tag() }}
+    INITIAL CASH
+    {{ init_form.init_cash(class_="readonly")}}
+    <br>
+    LEVERAGE
+    {{ init_form.leverage(class_="readonly")}}
+    <br>
+    LOT SIZE
+    {{ init_form.lot_size(class_="readonly")}}
+    <br>
+    {{init_form.date_time(class_="readonly hidd copydate")}}
+    <input type="submit" value="Start!">
+</form>
+
+
+    </div>
+
+    
+    <div class="col-xs-4">
+        <h2>Save/Load game</h2>
+        <span title="SAVE SESSION saves your current game to a file which is stored on your computer. This file can then be uploaded, and the game can be resumed using LOAD SESSION button. DON`T click load session button if no file is submitted, as this may cause a 30-seconds long overload of your browser" rel="tooltip"><img class="i-am-centered help-tool" src={{ url_for('static', filename= 'images/icon_with_question_mark.png')}}></span>
+        <form id="upload-file" method="post" enctype="multipart/form-data">
+    <fieldset>
+        <label for="file">Select a saved session file</label>
+        <input name="file" type="file">
+    </fieldset>
+    <fieldset>
+        <button id="upload-file-btn" type="button">Load Session</button>
+    </fieldset>
+</form>
+
+<br>
+<button onclick="save_sesh()" type="button">Save session</button>
+<br>
+    
+        </div>
+    </div>
+</div>
+<hr>
+<div class="container">
+    <div class="i-am-centered">
+        <h2>Travel to the future!</h2>
+        <span title="You can use this button both during simulator and without an initiated game session; if you specifiy 2 periods to be skipped, it means environment advances by 10 minutes; if 12 - by 1 hour. The submit button does not refresh the OHLC graph, you need to load them again to see updated feed" rel="tooltip"><img class="i-am-centered help-tool" src={{ url_for('static', filename= 'images/icon_with_question_mark.png')}}></span>
+<form class="secondary_form">
+5 MINUTE PERIODS TO BE SKIPPED
+<input id="skipping" type="number" value=0>
+<input type="submit">
+</form>
+        </div>
+</div>
+<br>
+<br>
+
+<hr>
+<div class="container">   
+<div id="tabs">
+  <h2 class="i-am-centered">OHLC Graphs</h2>
+    <br>
+  <p>When you click "Plot" button, the graph would appear under here</p>
+
+  <ul class="nav nav-tabs">
+
+  </ul>
+
+  <div class="tab-content">
+  </div>
+</div>
+</div>
+<hr>
+<div class="container cashes game-related">
+<h1>Free Margin: <span id="free_cash"></span></h1>
+<h1>Total cash: <span id="total_cash"></span></h1>
+</div>
+<br>
+<hr>
+<div class="container game-related">
+    <div class="row">
+        <div class="col-xs-6">
+            <h2>Make a Trade</h2>
+            <span title="Choose your currency and how much you want to buy; your deal will be recorded in the table below" rel="tooltip"><img class="i-am-centered help-tool" src={{ url_for('static', filename= 'images/icon_with_question_mark.png')}}></span>
+<form class="make_deal_form" method="post" enctype="multipart/form-data">
+    
+    {{ make_deal_form.hidden_tag() }}
+    CURRENCY
+    {{ make_deal_form.currency2 }}
+    <br>
+    NUMBER OF LOTS
+    {{ make_deal_form.lot_number }}
+    <br>
+    BUY/SELL
+    {{ make_deal_form.buy_sell }}
+    <br>
+    <input type="submit">
+</form>
+            </div>
+        <div class="col-xs-6">
+            <h2>Close a Trade</h2>
+            <span title="Type here an ID of an open position in the table below and you can close it." rel="tooltip"><img class="i-am-centered help-tool" src={{ url_for('static', filename= 'images/icon_with_question_mark.png')}}></span>
+<form class="close_deal" method="post" enctype="multipart/form-data">
+    
+    {{ close_deal_form.hidden_tag() }}
+    ID
+    {{ close_deal_form.id }}
+    <br>
+    <input type="submit" value="Close">
+</form>
+    </div>
+    </div>
+    </div>
+<br>
+<hr>
+<div class="container game-related">
+<div class="table_div">
+    <br>
+    <h2 class="i-am-centered">Performance Table</h2>
+     <br>
+  <p>When you close, make a deal or skip some time, the table below will be updated if there are any open deals</p>
+    <hr>
+    <div id="table_div"><table id="actions" class="display" width="80%"> <thead> <tr><th>ID</th><th>Currency</th><th>Size</th><th>Order</th><th>Initial Price</th><th>Current/Close Price</th><th>Start Date</th><th>Current/Close Date</th><th>Status</th><th>Profit</th></tr></thead></table></div>
+    </div>
+</div>
+<br>
+<hr>
+<div class="container" id="error-log" style="overflow-y: scroll; height:400px;">
+    <h3>Error Log</h3>
+    <br>
+     <p>Check here if you see any error alerts</p>
+    <hr>
+</div>
+{% endblock %}
+{% block scripts %}
+  
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script src="http://techanjs.org/techan.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+    <link href="{{ url_for('static', filename= 'styling.css')}}" rel="stylesheet">
+    
+<script src="{{ url_for('static', filename= 'js/bootstrap.min.js')}}">
+    </script>           
+    <script type="text/javascript">
+        
+
+        
+{% include 'simulator.js' %}
+    </script>
+    <script>
+    displayed_graphs=[];
+    $(document).ready(function() {
+        var targets = $( '[rel~=tooltip]' ),
+        target  = false,
+        tooltip = false,
+        title   = false;
+ 
+    targets.bind( 'mouseenter', function()
+    {
+        target  = $( this );
+        tip     = target.attr( 'title' );
+        tooltip = $( '<div id="tooltip"></div>' );
+ 
+        if( !tip || tip == '' )
+            return false;
+ 
+        target.removeAttr( 'title' );
+        tooltip.css( 'opacity', 0 )
+               .html( tip )
+               .appendTo( 'body' );
+ 
+        var init_tooltip = function()
+        {
+            if( $( window ).width() < tooltip.outerWidth() * 1.5 )
+                tooltip.css( 'max-width', $( window ).width() / 2 );
+            else
+                tooltip.css( 'max-width', 340 );
+ 
+            var pos_left = target.offset().left + ( target.outerWidth() / 2 ) - ( tooltip.outerWidth() / 2 ),
+                pos_top  = target.offset().top - tooltip.outerHeight() - 20;
+ 
+            if( pos_left < 0 )
+            {
+                pos_left = target.offset().left + target.outerWidth() / 2 - 20;
+                tooltip.addClass( 'left' );
+            }
+            else
+                tooltip.removeClass( 'left' );
+ 
+            if( pos_left + tooltip.outerWidth() > $( window ).width() )
+            {
+                pos_left = target.offset().left - tooltip.outerWidth() + target.outerWidth() / 2 + 20;
+                tooltip.addClass( 'right' );
+            }
+            else
+                tooltip.removeClass( 'right' );
+ 
+            if( pos_top < 0 )
+            {
+                var pos_top  = target.offset().top + target.outerHeight();
+                tooltip.addClass( 'top' );
+            }
+            else
+                tooltip.removeClass( 'top' );
+ 
+            tooltip.css( { left: pos_left, top: pos_top } )
+                   .animate( { top: '+=10', opacity: 1 }, 50 );
+        };
+ 
+        init_tooltip();
+        $( window ).resize( init_tooltip );
+ 
+        var remove_tooltip = function()
+        {
+            tooltip.animate( { top: '-=10', opacity: 0 }, 50, function()
+            {
+                $( this ).remove();
+            });
+ 
+            target.attr( 'title', tip );
+        };
+ 
+        target.bind( 'mouseleave', remove_tooltip );
+        tooltip.bind( 'click', remove_tooltip );
+    });
+        
+        
+        random_title();
+    $( "#cater" ).click(function(){
+      $('.submen').toggle();  
+    });
+     sort_button();
+        
+        
+        $('#upload-file-btn').click(function() {
+        var form_data = new FormData($('#upload-file')[0]);
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('.load_sesh') }}",
+            data: form_data,
+            contentType: false,
+            cache: false,
+            processData: false,
+            async: false,
+            success: function(data) {
+                if(data.errorrs=== undefined)  {
+                    
+                  if (typeof data === 'string' || data instanceof String){
+                      
+                  }else{
+                      if(data.margin_call===undefined){ 
+                      }else{ alert("You had a margin call. All active deals were closed.")}
+                      
+                      $(".skip-form").val(data.skipping);
+                      $(".maindate").val(data.start_date)
+                    $(".copydate").val($(".maindate").val());
+                    $(".readonly").prop("readonly", true);
+                      update_cashes(data);
+                      process_log(data);
+                      $(".game-related").show();
+                  }
+// it's something else  
+                    
+}else{ 
+    
+    alert("You have an error! Check the error log!");
+    $('#error-log').append('<p>'+JSON.stringify(data.errorrs)+'</p>'); 
+$("#error-log").css("display", "block");}
+            },
+        });
+    });
+        
+        
+        $('.secondary_form').submit(function(e){
+             
+          $('.skip-form').val(Number($('.skip-form').val())+
+                              Number($('#skipping').val()));
+         /*   var bla=displayed_graphs.slice();
+            close_all();
+            displayed_graphs=bla.slice();
+           for (i = 0; i < displayed_graphs.length; i++){ 
+        
+        $("#date_time").val(displayed_graphs[i][2].value);
+        $("#candle_type").val(displayed_graphs[i][3].value);
+        $("#candle_number").val(displayed_graphs[i][4].value);
+            $(".currency-form").val(displayed_graphs[i][1].value);
+               $(".main_form").submit();
+               
+             
+        
+}; */
+           $.ajax({
+                contentType: 'application/json',
+               dataType: 'json',
+                type: "POST",
+                url: "{{ url_for('.skip_date') }}",
+                data: {'steps':$("#skipping").val()}, // serializes the form's elements.
+                success: function (data) {
+                if(data.errorrs=== undefined)  {
+                    
+                  if (typeof data === 'string' || data instanceof String){
+                      
+                  }else{
+                      if(data.margin_call===undefined){
+                      }else{ alert("You had a margin call. All active deals were closed.")}
+                      update_cashes(data);
+                      process_log(data);
+                  }
+// it's something else  
+                    
+}else{ 
+    
+    alert("You have an error! Check the error log!");
+    $('#error-log').append('<p>'+JSON.stringify(data.errorrs)+'</p>'); }} 
+           }); 
+          e.preventDefault();
+        });
+        $('.make_deal_form').submit(function(e){
+           $.ajax({
+                type: "POST",
+                url: "{{ url_for('.make_deal') }}",
+                data: $('.make_deal_form').serialize(), // serializes the form's elements.
+                success: function (data) {
+                    if(data.errorrs=== undefined)  {
+                    process_log(data);
+                    update_cashes(data);
+} else{ 
+    
+    alert("You have an error! Check the error log!");
+    $('#error-log').append('<p>'+JSON.stringify(data.errorrs)+'</p>');
+$("#error-log").css("display", "block");}} 
+           });
+            
+             
+            
+          e.preventDefault();
+        });
+        
+        $('.init_form').submit(function(e){
+            $(".skip-form").val(0);
+            $(".copydate").val($(".maindate").val());
+            $(".readonly").prop("readonly", true);
+           $.ajax({
+                type: "POST",
+                url: "{{ url_for('.initiate_session') }}",
+                data: $('.init_form').serialize(), // serializes the form's elements.
+                success: function (data) {
+                    if(data.errorrs=== undefined)  {
+                    update_cashes(data);
+                }else{ 
+    
+    alert("You have an error! Check the error log!");
+    $('#error-log').append('<p>'+JSON.stringify(data.errorrs)+'</p>');
+                $("#error-log").css("display", "block");}}
+           });
+          e.preventDefault();
+        });
+        
+        $('.close_deal').submit(function(e){
+           $.ajax({
+                type: "POST",
+                url: "{{ url_for('.close_deal') }}",
+                data: $('.close_deal').serialize(), // serializes the form's elements.
+                success: function (data) {
+                    if(data.errorrs=== undefined)  {
+                    process_log(data); 
+                    update_cashes(data);
+                        $(".game-related").show();
+                }else{ 
+    
+    alert("You have an error! Check the error log!");
+    $('#error-log').append('<p>'+JSON.stringify(data.errorrs)+'</p>');
+                $("#error-log").css("display", "block");}}
+           });
+          e.preventDefault();
+        });
+        
+        
+        $('.main_form').submit(function (e) {
+            main_form_submit(e);
+        });
+        // Inject our CSRF token into our AJAX request.
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ form.csrf_token._value() }}")
+                }
+            }
+        })
+    });
+function save_sesh(){
+    window.open("{{ url_for('.save_sesh') }}", '_blank');}
+</script>
+    
+    
+    
+       
+{% endblock %}

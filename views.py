@@ -4,11 +4,13 @@ from app import app,db
 from flask import render_template
 from sqlalchemy import desc
 from flask_cors import cross_origin
+from trading_simulator.simulate import simulate
 def get_tags():
     tags_query=db.engine.execute("Select Count(tag_id),tag_title from Tag group by tag_title order by Count(tag_id) desc limit 8")
     return [i[1] for i in tags_query]
 
 app.register_blueprint(loading, url_prefix='/upload')
+app.register_blueprint(simulate, url_prefix='/simulator')
 
 @app.context_processor
 def utility_processor():
