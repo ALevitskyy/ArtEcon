@@ -1,4 +1,4 @@
-from flask import Blueprint, url_for, redirect, render_template
+from flask import Blueprint, url_for, redirect, render_template,request
 from flask_wtf import Form
 from werkzeug import secure_filename
 from wtforms import StringField,TextAreaField, Field

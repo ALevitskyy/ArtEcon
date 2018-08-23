@@ -1,13 +1,22 @@
 from loading import loading
-from models import Post, Tag
+from flask_wtf import Form
+from wtforms import StringField,IntegerField,TextField,TextAreaField
+from models import Post, Tag,Comment
 from app import app,db
-from flask import render_template
+from flask import render_template,redirect,request
 from sqlalchemy import desc
 from flask_cors import cross_origin
 from trading_simulator.simulate import simulate
+import datetime
 def get_tags():
     tags_query=db.engine.execute("Select Count(tag_id),tag_title from Tag group by tag_title order by Count(tag_id) desc limit 8")
     return [i[1] for i in tags_query]
+
+class CommentForm(Form):
+    author=StringField("Author",render_kw={'maxlength': 32})
+    comment_text=TextAreaField("Comment Text",render_kw={"cols":"60", "rows":"7"})
+    parent_id=IntegerField("Parent Comment")
+
 
 app.register_blueprint(loading, url_prefix='/upload')
 app.register_blueprint(simulate, url_prefix='/simulator')
@@ -23,13 +32,43 @@ def index():
     query=reversed(Post.query.all())
     return render_template("/new_index.html",posts=query,tags=get_tags())
 
-@app.route('/articles/<articlename>')
+@app.route('/articles/<articlename>',methods=['GET', 'POST'])
 @cross_origin()
 def article_show(articlename):
-    query=db.engine.execute("Select file From Post Where url='"+articlename+"'")
+    query=db.engine.execute("Select file,id From Post Where url='"+articlename+"'")
+    comment_form=CommentForm()
     for i in query:
         filename=i[0]
-    return render_template("/article3.html",filename=filename,tags=get_tags())
+        post_id=i[1]
+    query2=db.engine.execute("""WITH RECURSIVE nodes_cte(comment_id, post_id, comment_author, timestamp, comment_text,parent_id,depth,path) AS (
+        SELECT tn.comment_id, tn.post_id, tn.comment_author, tn.timestamp::timestamp(0), tn.comment_text,tn.parent_id, 1::INT AS depth, tn.comment_id::TEXT AS path FROM comment AS tn WHERE tn.post_id =""" +str(post_id)+"""AND tn.parent_id is null UNION ALL
+        SELECT c.comment_id, c.post_id, c.comment_author, c.timestamp::timestamp(0), c.comment_text,c.parent_id, p.depth + 1 AS depth, (p.path || '->' || c.comment_id::TEXT) FROM nodes_cte AS p, comment AS c WHERE c.parent_id = p.comment_id
+        )
+        SELECT * FROM nodes_cte ORDER  BY path, timestamp;""")
+    if comment_form.validate_on_submit():
+        if comment_form.parent_id.data is not None:
+            entry = Comment(
+                     post_id=post_id,
+                     comment_author=comment_form.author.data,
+                     timestamp=datetime.datetime.now(),
+                     comment_text=comment_form.comment_text.data,
+                     parent_id=comment_form.parent_id.data,
+                     )
+        else:
+            entry = Comment(
+                        post_id=post_id,
+                            comment_author=comment_form.author.data,
+                            timestamp=datetime.datetime.now(),
+                            comment_text=comment_form.comment_text.data
+                            )
+        db.session.add(entry)
+        db.session.flush()
+        db.session.commit()
+        return(redirect(request.url))
+    return render_template("/article3.html",filename=filename,
+                           tags=get_tags(),
+                           comment_form=comment_form,
+                           query2=query2)
 
 @app.route('/category/<categoryname>')
 def categorypage(categoryname):
