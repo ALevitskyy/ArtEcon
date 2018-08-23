@@ -46,20 +46,20 @@ def article_show(articlename):
         )
         SELECT * FROM nodes_cte ORDER  BY path, timestamp;""")
     if comment_form.validate_on_submit():
-        if comment_form.parent_id.data is not None:
+        if comment_form.parent_id.data=="99999999999999999" or comment_form.parent_id.data==99999999999999999:
             entry = Comment(
                      post_id=post_id,
                      comment_author=comment_form.author.data,
                      timestamp=datetime.datetime.now(),
                      comment_text=comment_form.comment_text.data,
-                     parent_id=comment_form.parent_id.data,
                      )
         else:
             entry = Comment(
-                        post_id=post_id,
+                            post_id=post_id,
                             comment_author=comment_form.author.data,
                             timestamp=datetime.datetime.now(),
-                            comment_text=comment_form.comment_text.data
+                            comment_text=comment_form.comment_text.data,
+                            parent_id=comment_form.parent_id.data,
                             )
         db.session.add(entry)
         db.session.flush()
