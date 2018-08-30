@@ -1,0 +1,30 @@
+---
+title: "The Basic Guide to U.S. - Mexico trade agreement"
+author: "Steven Burke (steven.burke@mail.utoronto.ca)"
+date: "8/27/2018"
+output: 
+  html_document:
+    css: styles.css
+---
+
+## Talking behind Canada's back
+
+On August 27th, 2018 the United States further de-escalated market tensions signing an optimistic trade deal with Mexico. The US-EU trade negotiation last month heavily favoured U.S. exports into the European Union and the US - Mexico deal favours U.S. auto manufacturing production and investment. Trump's trade deals are strengthening the U.S. current account and trade balance. Corporate earnings continue to beat expectations and recent tax reform explain why markets are bullish with the S&P 500 and Nasdaq reaching all time highs yet again in 2018.  
+
+This trade deal holds more market sentiment mainly because Canada, a major trading partner with both Mexico and the U.S., is not included in what was a trilateral agreement. Canada has until Friday, August 31st to reach an agreement with the United States to be included in the agreement. Mexico has already expressed interest in Canada signing the agreement however the United States is targeting Canada's dairy market and insist Canada make concessions to allow over supplied U.S. milk and dairy products to flow into Canadian markets.
+
+## Dairy industry as the main source of discontent
+
+Canada already imports more dairy products from the U.S than they export there. Still Trump`s administration looks to renegotiate import tariffs in hopes of adding to their winning streak of settling trade disputes. The probability of Canada conceding on the Dairy issue just increased significantly, even though many Canadians understand the importance of food sovereignty and the specific health risks involving dairy products being outsourced to any international producer willing to cut costs at any cost. Dairy farmers also invest a significant amount of money into marketing and educating consumers on the health benefits and the importance dairy plays in a healthy diet.
+
+Dairy products are treated more like a public good than a private good under Canada's Supply Chain Management Association. By setting quotas for domestic dairy farmers, guaranteeing a market price and imposing tariffs on competing products, Canada can ensure the safety of consumers, ensure a lower market price than most advanced countries in the world including the U.S. and ensure against shortages and surpluses. Supply chain management was enacted for good reasons, making concessions on imports of dairy products will not allow Canada to protect against the potential threats facing their domestic industry.
+
+## Ambiguous consequences for Mexican workers
+
+Mexico still stands to gain from this trade agreement as the U.S. imports over 75% of Mexico's annual exports. Exports mainly consist of electronics, appliances, and engines to the U.S. where both electronics and appliances would benefit. Mexico's auto industry faces significant uncertainty in the new trade agreement. The deal stipulates that 75% of any vehicle sold in North America must be produced locally. Also at least 40-45% of employees producing the car must be getting paid at least $16USD/hour. This would impact Mexico in two ways: Mexico's market for auto parts would increase by ensuring 75% of the car is produced locally. However, raising the wages of workers would lose some ability to compete with U.S. and Canadian auto plants who currently pay on average higher wages to their employees. This would potentially shift production away from Mexico into Canada and the U.S. where there is a relative abundance of high-skilled labor. Therefore, it is still ambiguous whether Mexico's auto industry will benefit from the new trade deal. Mexico agreeing to these terms while Canada is still in dispute with the U.S. certainly reduces downside risk since Mexico can still increase their market share without the risk of losing production and investment into auto plants to Canadian manufacturing. 
+
+## Canadian Dillema and Trump's inevitable success
+
+Mexico had little choice but to sign an agreement which now leaves Canada little to no room for negotiation. Canada will face insurmountable pressure in their auto industry if they fail to reach an agreement by Friday that will ensure their place in the deal coming into effect December 1st. The sunset clause also terminates the original NAFTA deal. 
+
+Ultimately North American markets will react sporadically the rest of the week as we await what will be a huge announcement one way or the other. If Canada concedes they will risk losing much of their Dairy industry. However, if don't they risk losing a significant portion of their auto industry. The Mexico-U.S. trade deal plays out perfectly for the U.S. and can only lead to another victory for the Trump administration. 

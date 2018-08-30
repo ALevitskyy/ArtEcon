@@ -1,0 +1,85 @@
+---
+title: "Forex Historical Trading Simulator"
+date: "8/27/2018"
+output: 
+  html_document:
+    css: styles.css
+---
+
+# Link to simulator page: <a href="http://www.artecon.xyz/simulator">www.artecon.xyz/simulator</a>
+
+## <u>About</u>:
+
+The simulator provides realistic representation of trading environtment, including comissions (comission table is available <a href="#spread">here</a>) and leverage. The simulation has data available from January 2015 and ending on April 2018 so one can start trading anywhere between these 2 dates (subject to data availability, so you can start January, 2015 but you won`t be able to see the OHLC candles, so better start somewhere in 2016.) The simulator has 2 modes: testing and game mode. In test mode while the game session is not yet initiated, one can just look at historical data and do some time skips to gain general idea of intraday market behaviour. After a game session started, entering the game mode, all buy/sell deals are logged and summary of trading perfromance becomes available. The player can revise decisions in 5 minute increments or can wait arbitrary ammount of time to see outcomes of her decisions or to allow markets to settle.
+
+## <u>Advantages</u>:
+
+*  <b>Accelerated learning</b>: time skip system allows to gain months of trading expirience in few days of continiuous practice;
+* <b>Robust testing:</b> demo account only allows you to judge your performance at the current point in time. While you may be succesfull in current conditions (due to luck), you perfroamnce may deteriorate a lot after conditions change; for example long-term trend change or new legislation affecting market microstrucutre. The simulator allows you to test your skills in wide variety of histrorical conditions giving you a better assesment of your skill.
+
+## <u>Disadvantages</u>:
+
+* <b>Only 10 currencies available</b> for trading, as I did not include currencies with higher bid-ask spread as I don`t believe one can make consistent profit trading those (but can easily add more if requried)
+* <b>Trading with simulator may not be the same as trading with your broker!</b> Your broker may have different comission structure, may be subject to technical problem when it is very inconvenient and may have different profit calculation system
+* <b>No time pressure.</b>  At times of high volatility you may not have time to stop and think about your future action
+* <b>No stop loss/margin call system is a bit inaccurate. </b> Stop loss is meaningles to implement as different brokers have different slippage (stop loss may not work as expected). Margin call happens when free margin becomes smaller then required margin. While free margin is tracked in the end of skipping period, it is not monitored during the time skip, meaning that MC would be trigerred less frequently than it would have happend in the real life.
+
+## <u>Conclusion</u>:
+
+<b>The simulator supplements, not replaces, practicing with your broker`s demo account prior to trading with real money.</b> Practicing with demo account gives important understanding of the platform you will be using, how profits are calculated and how leverage works. In my opinion, practicing with the simulator can give trader an edge by overcoming the biggest enemy of novice traders - lack of experince and understanding of the markets. With a simulator it is easier to find out whether your recent success was just an outcome of luck or a result of a good strategy. This understanding is a key to long-term financial gains from trading.
+
+## <u>Apeendix. Technical note</u>
+* The timezone of all data is: Eastern Standard Time (EST) time-zone WITHOUT Day Light Savings adjustments.
+* Profits are calculated using the following formula: 
+$$ (P_{t}-P_{t-1}-commision)/P_{t}*LotSize*NumberofLotsBought \textbf{ for long position}$$
+and 
+$$ (P_{t-1}-P_{t}-commision)/P_{t}*LotSize*NumberofLotsBought \textbf{ for short position}$$
+where $P_{t-1}$ is the price the trade was open at and $P_{t}$ is the close price. While calculation is not perfectly accurate, it seems to me like a good approximation to how profits are calculated by majority of brokers (I am not familiar with exact formulas they are using).
+* The <a name="spread"></a>bid-ask spread table (I got it from one of the brokers I am not going to name):
+
+<table>
+  <tr>
+    <th>Currency</th>
+    <th>Bid-Ask Spread</th> 
+  </tr>
+<tr>
+    <th>AUDUSD</th>
+    <th>0.00025</th> 
+  </tr>
+<tr>
+    <th>EURCHF</th>
+    <th>0.0003</th> 
+  </tr>
+<tr>
+    <th>EURGBP</th>
+    <th>0.00025</th> 
+  </tr>
+<tr>
+    <th>EURUSD</th>
+    <th>0.00019</th> 
+  </tr>
+<tr>
+    <th>GBPUSD</th>
+    <th>0.00024</th> 
+  </tr>
+<tr>
+    <th>NZDUSD</th>
+    <th>0.0003</th> 
+  </tr>
+<tr>
+    <th>USDCAD</th>
+    <th>0.0003</th> 
+  </tr>
+<tr>
+    <th>USDCHF</th>
+    <th>0.00025</th> 
+  </tr>
+<tr>
+    <th>USDJPY</th>
+    <th>0.02</th> 
+  </tr>
+</table>
+  
+    
+    
+##### *Thank you for reading this and checking out the simulator. You can find the code for the app on the website`s <a href="https://github.com/ALevitskyy/ArtEcon/tree/master/trading_simulator">GitHub repository</a>. Please, leave a comment, if you have any suggestions, liked the app or found a profitable trading strategy!*
