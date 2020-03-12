@@ -1,47 +1,45 @@
 {% extends "main_page_scripts.js" %}
 {% block content %}
 <!--Create header-->
-      {% macro img_maker(post)  %}
-       <div class=" col-sm-12 col-md-6 col-lg-4 col-xl-3">
-       <div class="subart">
-         <img class=art-im src="https://s3.us-east-2.amazonaws.com/artecon/article_images/{{post.post.image}}">
-           <div class="art-title">
-               <a href="{{url_for('article_show',articlename=post.post.url)}}"
-                  
-                  >{{post.post.title}}</a></div>
-           {{ post.post.description }}
-               
-               <div class="art-tags"><span style="color:black;">Tags:</span> {% for tag in post.post.tags  %}
-                   <a href="{{url_for('.categorypage',          categoryname=remove_whitespace(tag.tag_title)
-          )}}">{{tag.tag_title}};  </a>
-                   
-                   {% endfor %}
-           
-           </div>
-               <br>
-               <div style="float:right;
+{% macro img_maker(post)  %}
+<div class=" col-sm-12 col-md-6 col-lg-4 col-xl-3">
+    <div class="subart">
+        <img class=art-im src="https://s3.us-east-2.amazonaws.com/artecon/article_images/{{post.post.image}}">
+        <div class="art-title">
+            <a href="{{url_for('article_show',articlename=post.post.url)}}">{{post.post.title}}</a></div>
+        {{ post.post.description }}
+
+        <div class="art-tags"><span style="color:black;">Tags:</span> {% for tag in post.post.tags  %}
+            <a href="{{url_for('.categorypage',          categoryname=remove_whitespace(tag.tag_title)
+          )}}">{{tag.tag_title}}; </a>
+
+            {% endfor %}
+
+        </div>
+        <br>
+        <div style="float:right;
                        color: red;
                         padding-right: 20px;">
-           Date uploaded: {{ post.post.date }}
-               </div>
-               
-           </div>
-      </div>
-           
-          
-          {% endmacro %}      
-      
-      <div class="main paper">
-      <div class="container arts">
+            Date uploaded: {{ post.post.date }}
+        </div>
 
- {% for post in posts %}
-      
-      
-      {{ img_maker(post) }}
-          {% endfor %}
-          
-   
-          
+    </div>
 </div>
+
+
+{% endmacro %}
+
+<div class="main paper">
+    <div class="container arts">
+
+        {% for post in posts %}
+
+
+        {{ img_maker(post) }}
+        {% endfor %}
+
+
+
+    </div>
 </div>
 {% endblock %}

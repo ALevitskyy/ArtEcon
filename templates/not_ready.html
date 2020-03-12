@@ -2,28 +2,22 @@
 
 
 {% block content %}
-        <div style="padding-left: 50px;">
-       <h1 style="color:green">This page does not exist yet. If you ask politely, something may appear here sooner or later:)</h1>
-            </div>
+<div style="padding-left: 50px;">
+    <h1 style="color:green">This page does not exist yet. If you ask politely, something may appear here sooner or later:)</h1>
+</div>
 {% endblock %}
 
 {% block scripts %}
-<script> 
-   $(document).ready(function(){
-       random_title();
-     
-    $( "#cater" ).click(function(){
-      $('.submen').toggle();  
-    });
-     sort_button();
+<script>
+    $(document).ready(function() {
+        random_title();
+
+        $("#cater").click(function() {
+            $('.submen').toggle();
+        });
+        sort_button();
     })
 </script>
-   
-   
+
+
 {% endblock %}
-
-
-
-
-
-
